@@ -1,0 +1,3 @@
+[submodule "ffi/Externals/tinyusdz"]
+	path = ffi/Externals/tinyusdz
+	url = https://github.com/syoyo/tinyusdz.git

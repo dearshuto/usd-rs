@@ -1,0 +1,29 @@
+BasedOnStyle: Google
+IndentWidth: 4
+
+# public/private のインデントを下げる
+AccessModifierOffset: -4
+
+ColumnLimit: 100
+AlignAfterOpenBracket: Align
+
+# テンプレート宣言を別の行にする
+AlwaysBreakTemplateDeclarations: true
+
+# イコールでそろえる
+AlignConsecutiveAssignments: true
+
+# コメントをそろえる
+AlignTrailingComments: true
+
+# 関数パラメータをバラけた行で表示
+BinPackParameters: false
+
+# 波括弧
+BreakBeforeBraces: Custom
+BraceWrapping:
+  AfterClass: true
+  AfterEnum: true
+  AfterFunction: true
+  AfterStruct: true
+  SplitEmptyFunction: false
