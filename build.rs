@@ -1,6 +1,6 @@
 fn main() {
     // cmake による tinyusdz のビルド
-    let dst = cmake::Config::new("ffi/Externals/tinyusdz")
+    let _ = cmake::Config::new("ffi/Externals/tinyusdz")
         // .always_configure(false)
         // .very_verbose(true)
         .configure_arg("-DTINYUSDZ_BUILD_EXAMPLES=OFF")
@@ -11,7 +11,7 @@ fn main() {
         .configure_arg("-DTINYUSDZ_WITH_TOOL_USDC_PARSER=OFF")
         .build_target("tinyusdz_static")
         .build();
-    println!("cargo:rustc-link-search=native={}", dst.display());
+    println!("cargo:rustc-link-search=native={}/ffi/Libraries", std::env::current_dir().unwrap().display());
     println!("cargo:rustc-link-lib=static=tinyusdz_static");
 
     // ffi ライブラリのビルド
@@ -21,5 +21,10 @@ fn main() {
         .build();
     println!("cargo:rustc-link-search=native={}", dst.display());
     println!("cargo:rustc-link-lib=static=usdffi");
+    
+    #[cfg(target_os = "macos")]
     println!("cargo:rustc-link-lib=c++");
+
+    #[cfg(target_os = "linux")]
+    println!("cargo:rustc-link-lib=stdc++");
 }
