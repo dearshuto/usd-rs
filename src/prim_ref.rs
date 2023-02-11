@@ -1,6 +1,6 @@
-use std::ffi::c_void;
+use std::ffi::{c_char, c_void, CString};
 
-use crate::{GeomMeshRef, XformRef};
+use crate::{AttributeRef, GeomMeshRef, XformRef};
 
 pub struct PrimRef<'a> {
     pointer: *const c_void,
@@ -24,6 +24,16 @@ impl<'a> PrimRef<'a> {
         } else {
             Some(XformRef::new(pointer))
         }
+    }
+
+    pub fn get_attribute(&self, name: &str) -> Option<AttributeRef<'a>> {
+        let name = CString::new(name).unwrap();
+        let mut pointer = std::ptr::null_mut::<c_void>();
+        if !unsafe { Prim_GetAttribute(&mut pointer, self.pointer, name.as_ptr()) } {
+            return None;
+        }
+
+        return Some(AttributeRef::new(pointer));
     }
 
     pub fn get_child_count(&self) -> i32 {
@@ -54,4 +64,9 @@ extern "C" {
     fn Prim_AsXForm(instance: *const c_void) -> *mut c_void;
     fn Prim_GetChildCount(instance: *const c_void) -> i32;
     fn Prim_GetChild(instance: *const c_void, index: i32) -> *const c_void;
+    fn Prim_GetAttribute(
+        attribute: &mut *mut c_void,
+        instance: *const c_void,
+        name: *const c_char,
+    ) -> bool;
 }

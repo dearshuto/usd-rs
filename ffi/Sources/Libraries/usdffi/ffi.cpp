@@ -106,12 +106,23 @@ extern "C" int Prim_GetChildCount(const tinyusdz::Prim *pPrim)
     return static_cast<int>(children.size());
 }
 
-extern "C" const tinyusdz::Prim* Prim_GetChild(const tinyusdz::Prim *pPrim, int index)
+extern "C" const tinyusdz::Prim *Prim_GetChild(const tinyusdz::Prim *pPrim, int index)
 {
     auto &children = pPrim->children();
-    auto* pChild = &children[index];
+    auto *pChild   = &children[index];
     return pChild;
 }
+
+extern "C" bool Prim_GetAttribute(tinyusdz::Attribute *pOutInstance,
+                                  const tinyusdz::Prim *pPrimitive,
+                                  const char *attributeName /*ex: "points" */)
+{
+    std::string error;
+    const auto isSuccess =
+        tinyusdz::tydra::GetAttribute(*pPrimitive, attributeName, pOutInstance, &error);
+    return isSuccess;
+}
+
 //-----------------------------------------------------------------------------
 
 // GeomPrimvar の API
@@ -213,22 +224,91 @@ extern "C" bool Attribute_GetValuePpoint3f(const tinyusdz::Attribute *pInstance)
 //-----------------------------------------------------------------------------
 
 // Xform の API
-extern "C" bool Xform_GetLocalMatrix(const tinyusdz::Xform *pInstance, float* pArray, int count) {
-     const auto& matrix = pInstance->GetLocalMatrix();
-    auto* pData = &matrix->m[0][0];
+extern "C" bool Xform_GetLocalMatrix(const tinyusdz::Xform *pInstance, float *pArray, int count)
+{
+    tinyusdz::XformOp::OpType;
+    const auto &matrix = pInstance->GetLocalMatrix();
+    auto *pData        = &matrix->m[0][0];
     for (auto index = 0; index < 16; ++index) {
         pArray[index] = pData[index];
     }
 }
+
+extern "C" const tinyusdz::XformOp *Xform_GetOp(const tinyusdz::Xform *pInstance, int index)
+{
+    auto *pOp = &pInstance->xformOps[index];
+    return pOp;
+}
+
+extern "C" int32_t Xform_GetOpCount(const tinyusdz::Xform *pInstance)
+{
+    auto count = static_cast<int>(pInstance->xformOps.size());
+    return count;
+}
+
+// XformOp の API
+extern "C" int32_t XformOp_GetType(const tinyusdz::XformOp *pInstance)
+{
+    return static_cast<int32_t>(pInstance->op_type);
+}
+
+extern "C" bool XformOp_IsTimeSamples(const tinyusdz::XformOp *pInstance)
+{
+    return pInstance->is_timesamples();
+}
+
+extern "C" const tinyusdz::value::TimeSamples *XformOp_GetTimeSamples(
+    const tinyusdz::XformOp *pInstance)
+{
+    return &pInstance->get_var().ts_raw();
+}
+
+extern "C" bool XformOp_TimeSamplesEmpty(const tinyusdz::XformOp *pInstance)
+{
+    auto &&timeSamples = pInstance->get_timesamples().value();
+    return timeSamples.empty();
+}
+
+extern "C" int32_t XformOp_TimeSamplesSize(const tinyusdz::XformOp *pInstance)
+{
+    auto &&timeSamples = pInstance->get_timesamples().value();
+    return timeSamples.size();
+}
 //-----------------------------------------------------------------------------
 
-// tydra の API
-extern "C" bool tydra_GetAttribute(tinyusdz::Attribute *pOutInstance,
-                                   const tinyusdz::Prim *pPrimitive,
-                                   const char *attributeName /*ex: "points" */)
+// TimeSamples の API
+extern "C" bool TimeSamples_Empty(const tinyusdz::value::TimeSamples *pInstance)
 {
-    std::string error;
-    const auto isSuccess =
-        tinyusdz::tydra::GetAttribute(*pPrimitive, attributeName, pOutInstance, &error);
-    return isSuccess;
+    return pInstance->empty();
 }
+
+extern "C" int32_t TimeSamples_Size(const tinyusdz::value::TimeSamples *pInstance)
+{
+    return pInstance->size();
+}
+
+extern "C" double TimeSamples_GetTime(const tinyusdz::value::TimeSamples *pInstance, int index)
+{
+    const auto time = pInstance->get_time(index).value();
+    return time;
+}
+
+extern "C" void TimeSamples_GetValue(tinyusdz::value::Value *pOutValue,
+                                     const tinyusdz::value::TimeSamples *pInstance,
+                                     int index)
+{
+    const auto v = pInstance->get_value(index).value();
+    std::memcpy(pOutValue, &v, sizeof(tinyusdz::value::Value));
+}
+//-----------------------------------------------------------------------------
+
+// Value の API
+extern "C" tinyusdz::value::Value *Value_New() { return new tinyusdz::value::Value; }
+
+extern "C" void Value_Delete(tinyusdz::value::Value *pInstance) { delete pInstance; }
+
+extern "C" float Value_AsFloat(const tinyusdz::value::Value *pInstance)
+{
+    return *pInstance->as<float>();
+}
+//-----------------------------------------------------------------------------
