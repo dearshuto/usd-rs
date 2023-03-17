@@ -224,9 +224,10 @@ extern "C" bool Attribute_GetValuePpoint3f(const tinyusdz::Attribute *pInstance)
 //-----------------------------------------------------------------------------
 
 // Xform の API
-extern "C" bool Xform_GetLocalMatrix(const tinyusdz::Xform *pInstance, float *pArray, int count)
+extern "C" void Xform_GetLocalMatrix(const tinyusdz::Xform *pInstance,
+                                     float *pArray,
+                                     [[maybe_unused]] int count)
 {
-    tinyusdz::XformOp::OpType;
     const auto &matrix = pInstance->GetLocalMatrix();
     auto *pData        = &matrix->m[0][0];
     for (auto index = 0; index < 16; ++index) {
