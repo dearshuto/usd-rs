@@ -47,10 +47,19 @@ fn main() {
     }
 
     let Some(geom_mesh) = child.as_gemo_mesh() else {
-                println!("failed to get GeomMesh");
+        println!("failed to get GeomMesh");
         return;
     };
 
-    let (x, y, z) = geom_mesh.get_point(0);
-    println!("Point0: {}, {}, {}", x, y, z);
+    for index in 0..geom_mesh.get_point_count() {
+        let (x, y, z) = geom_mesh.get_point(index);
+        println!("Point{}: {}, {}, {}", index, x, y, z);
+    }
+
+    // 法線
+    println!("normal: count: {}", geom_mesh.get_normal_count());
+    for index in 0..geom_mesh.get_normal_count() {
+        let (x, y, z) = geom_mesh.get_normal(index);
+        println!("Normal{}: {}, {}, {}", index, x, y, z);
+    }
 }
