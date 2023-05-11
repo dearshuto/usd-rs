@@ -1,6 +1,7 @@
 mod ascii_reader;
 mod attribute_ref;
 mod ffi;
+mod geom_cube;
 mod geom_mesh_ref;
 mod load_state;
 mod path;
@@ -14,6 +15,7 @@ mod xform_op_ref;
 
 pub use ascii_reader::AsciiReader;
 pub use attribute_ref::AttributeRef;
+pub use geom_cube::GeomCubeRef;
 pub use geom_mesh_ref::GeomMeshRef;
 pub use load_state::LoadState;
 pub use path::Path;

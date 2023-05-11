@@ -88,6 +88,12 @@ extern "C" const tinyusdz::GeomMesh *Prim_AsGeomMesh(const tinyusdz::Prim *pPrim
     return pGeomMesh;
 }
 
+extern "C" const tinyusdz::GeomCube *Prim_AsGeomCube(const tinyusdz::Prim *pPrim)
+{
+    auto *pGeomCube = pPrim->as<tinyusdz::GeomCube>();
+    return pGeomCube;
+}
+
 extern "C" int64_t Prim_PrimId(const tinyusdz::Prim *pPrim)
 {
     const auto id = pPrim->prim_id();
@@ -173,6 +179,43 @@ extern "C" void GeomMesh_GetPoints(const tinyusdz::GeomMesh *pGeomMesh,
     const auto &points = pGeomMesh->get_points();
     *ppOutHead         = points.data();
     *pOutCount         = static_cast<int>(points.size());
+}
+
+extern "C" int GeomMesh_GetIndexCount(const tinyusdz::GeomMesh *pGeomMesh)
+{
+    const auto count = pGeomMesh->get_faceVertexIndices().size();
+    return count;
+}
+
+extern "C" void GeomMesh_GetIndex(
+    const tinyusdz::GeomMesh *pGeomMesh, int32_t* pOutIndex, int index)
+{
+    const auto indices = pGeomMesh->get_faceVertexIndices();
+    *pOutIndex = indices[index];
+}
+
+extern "C" int GeomMesh_GetNormalCount(const tinyusdz::GeomMesh *pGeomMesh)
+{
+    const auto &normals_opt = pGeomMesh->normals;
+    if (normals_opt.is_value_empty()) {
+        return 0;
+    }
+
+    return pGeomMesh->get_normals().size();
+}
+
+extern "C" void GeomMesh_GetNormal(
+    const tinyusdz::GeomMesh *pGeomMesh, float *pOutX, float *pOutY, float *pOutZ, int index)
+{
+    const auto &normals_opt = pGeomMesh->normals;
+    if (normals_opt.is_value_empty()) {
+        return;
+    }
+
+    const auto normal = pGeomMesh->get_normals()[index];
+    *pOutX            = normal.x;
+    *pOutY            = normal.y;
+    *pOutZ            = normal.z;
 }
 
 extern "C" void GeomMesh_GetFaceVertexCounts(const tinyusdz::GeomMesh *pGeomMesh,
@@ -311,5 +354,11 @@ extern "C" void Value_Delete(tinyusdz::value::Value *pInstance) { delete pInstan
 extern "C" float Value_AsFloat(const tinyusdz::value::Value *pInstance)
 {
     return *pInstance->as<float>();
+}
+//-----------------------------------------------------------------------------
+
+// GeomCube の API
+extern "C" void a(tinyusdz::GeomCube* pGeomCube) {
+    
 }
 //-----------------------------------------------------------------------------

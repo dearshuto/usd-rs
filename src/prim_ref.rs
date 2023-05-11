@@ -1,6 +1,6 @@
 use std::ffi::{c_char, c_void, CString};
 
-use crate::{AttributeRef, GeomMeshRef, XformRef};
+use crate::{AttributeRef, GeomCubeRef, GeomMeshRef, XformRef};
 
 pub struct PrimRef<'a> {
     pointer: *const c_void,
@@ -14,6 +14,15 @@ impl<'a> PrimRef<'a> {
             None
         } else {
             Some(GeomMeshRef::new(pointer))
+        }
+    }
+
+    pub fn as_geom_cube(&self) -> Option<GeomCubeRef> {
+        let pointer = unsafe { Prim_AsGeomCube(self.pointer) };
+        if pointer as i32 == 0 {
+            None
+        } else {
+            Some(GeomCubeRef::new(pointer))
         }
     }
 
@@ -61,6 +70,7 @@ impl<'a> PrimRef<'a> {
 
 extern "C" {
     fn Prim_AsGeomMesh(instance: *const c_void) -> *mut c_void;
+    fn Prim_AsGeomCube(instance: *const c_void) -> *mut c_void;
     fn Prim_AsXForm(instance: *const c_void) -> *mut c_void;
     fn Prim_GetChildCount(instance: *const c_void) -> i32;
     fn Prim_GetChild(instance: *const c_void, index: i32) -> *const c_void;
