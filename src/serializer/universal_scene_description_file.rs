@@ -131,7 +131,18 @@ impl UniversalSceneDescriptionFile {
                     property,
                 })
             }
-            Token::Normal3fArray => todo!(),
+            Token::Normal3fArray => {
+                let Token::Identifier(identifier) = token_stream.next().unwrap() else {
+                    panic!()
+                };
+                let _equal = token_stream.next();
+                let data = Self::comsume_packed_number_array(&mut token_stream);
+                let property = PropertyType::Normals(data);
+                Some(Property {
+                    identifier: identifier.clone(),
+                    property,
+                })
+            }
             Token::Uniform => todo!(),
             _ => None,
         }
@@ -359,6 +370,37 @@ mod tests {
         assert_eq!(
             data,
             &[[-0.5, -0.5, 1.0], [0.5, -0.5, 1.0], [0.0, 0.5, 1.0]]
+        );
+    }
+
+    #[test]
+    fn def_normals_property() {
+        let input = r#"#usda 1.0
+                        def Xform "sample" {
+                            normal3f[] normals = [(0.09267433, 0.009209316, 0.99565387), (0.09267433, 0.009209316, 0.99565387)]
+                }"#;
+        let tokens = &Lexer::tokenize(input);
+        let syntax_tree = SyntaxTree::new(tokens);
+        let usd = UniversalSceneDescriptionFile::new(&syntax_tree);
+
+        // def が抽出されている
+        assert_eq!(usd.definitions().len(), 1);
+
+        // def のパラメータが抽出できている
+        let definition = &usd.definitions()[0];
+        assert_eq!(definition.name, "sample");
+        assert_eq!(definition.properties[0].identifier, "normals");
+
+        let PropertyType::Normals(data) = &definition.properties[0].property else {
+            panic!()
+        };
+
+        assert_eq!(
+            data,
+            &[
+                [0.09267433, 0.009209316, 0.99565387],
+                [0.09267433, 0.009209316, 0.99565387]
+            ]
         );
     }
 }

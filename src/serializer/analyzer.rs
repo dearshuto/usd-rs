@@ -234,12 +234,13 @@ mod tests {
 
     #[test]
     fn keywords() {
-        let input = r#"color3f float3[] uniform int[]"#;
+        let input = r#"color3f float3[] uniform int[] normal3f[]"#;
         let tokens = &Lexer::tokenize(input);
         assert_eq!(Token::Color3f, tokens[0]);
         assert_eq!(Token::Float3fArray, tokens[1]);
         assert_eq!(Token::Uniform, tokens[2]);
         assert_eq!(Token::IntArray, tokens[3]);
+        assert_eq!(Token::Normal3fArray, tokens[4]);
     }
 
     #[test]

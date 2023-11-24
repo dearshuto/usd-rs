@@ -8,4 +8,5 @@ pub enum PropertyType {
     FaceVertexCounts(Vec<i32>),
     FaceVertexIndicies(Vec<i32>),
     Points(Vec<[f32; 3]>),
+    Normals(Vec<[f32; 3]>),
 }

@@ -15,6 +15,7 @@ fn main() {
                 usd_rs::serializer::PropertyType::Points(points) => {
                     println!("points = {:?}", points);
                 }
+                _ => {}
             }
         }
     }
