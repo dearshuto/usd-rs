@@ -7,7 +7,7 @@ mod universal_scene_description_file;
 use analyzer::Lexer;
 use syntax_tree::SyntaxTree;
 pub use tokens::{Token, CHAR_TOKENS, KEYWORD_TOKENS};
-pub use types::UpAxis;
+pub use types::{PropertyType, UpAxis};
 pub use universal_scene_description_file::{Header, UniversalSceneDescriptionFile};
 
 pub fn from_str(str: &str) -> Result<UniversalSceneDescriptionFile, ()> {

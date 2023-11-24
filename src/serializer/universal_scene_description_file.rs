@@ -26,10 +26,8 @@ impl Default for Header {
 }
 
 pub struct Property {
-    #[allow(dead_code)]
-    identifier: String,
-    #[allow(dead_code)]
-    property: PropertyType,
+    pub identifier: String,
+    pub property: PropertyType,
 }
 
 pub struct Definition {
