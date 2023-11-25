@@ -116,7 +116,7 @@ impl Lexer {
         }
 
         while let Some(c) = iter.peek() {
-            if c.is_numeric() || c == &'.' {
+            if c.is_numeric() || c == &'.' || c == &'-' || c == &'e' {
                 let c = iter.next().unwrap();
                 result.push(c);
                 continue;
@@ -223,13 +223,15 @@ mod tests {
 
     #[test]
     fn number() {
-        let input = r#"12345, 12, 345"#;
+        let input = r#"12345, 12, 345, 3.061617e-17"#;
         let tokens = &Lexer::tokenize(input);
         assert_eq!(Token::NumberValue(12345.0), tokens[0]);
         assert_eq!(Token::Comma, tokens[1]);
         assert_eq!(Token::NumberValue(12.0), tokens[2]);
         assert_eq!(Token::Comma, tokens[3]);
         assert_eq!(Token::NumberValue(345.0), tokens[4]);
+        assert_eq!(Token::Comma, tokens[5]);
+        assert_eq!(Token::NumberValue(3.061617e-17), tokens[6]);
     }
 
     #[test]
