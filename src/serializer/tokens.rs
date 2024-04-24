@@ -1,73 +1,101 @@
-use phf::phf_map;
+use logos::Logos;
 
-#[derive(Debug, PartialEq, PartialOrd, Clone)]
+#[derive(Logos, Debug, PartialEq, PartialOrd, Clone)]
+#[logos(skip r"[ \t\n\f]+")] // Ignore this regex pattern between tokens
 pub enum Token {
+    #[token("{")]
     BraceL,
+
+    #[token("}")]
     BraceR,
+
+    #[token("[")]
     BracketL,
+
+    #[token("]")]
     BracketR,
-    ParenthesesR,
+
+    #[token("(")]
     ParenthesesL,
+
+    #[token(")")]
+    ParenthesesR,
+
+    #[token(":")]
     Colon,
+
+    #[token(",")]
     Comma,
+
+    #[token("=")]
     Equal,
-    Space,
-    Return,
-    StringValue(String),
-    NumberValue(f64),
-    BooleanValue(bool),
+
+    #[regex(r"[+-]?[0-9]+(?:\.[0-9]+)?")]
+    Number,
+
+    #[token("bool")]
     Bool,
+
+    #[token("color3f")]
     Color3f,
+
+    #[token("color3f[]")]
     Color3fArray,
+
+    #[token("float3")]
     Float3f,
+
+    #[token("float3f[]")]
     Float3fArray,
+
+    #[token("double3")]
     Double3f,
+
+    #[token("int[]")]
     IntArray,
+
+    #[token("point3f")]
     Point3f,
+
+    #[token("point3f[]")]
     Point3fArray,
+
+    #[token("normal3f[]")]
     Normal3fArray,
+
+    #[token("uniform")]
     Uniform,
+
+    #[token("null")]
     NullValue,
+
+    #[token("def")]
     Def,
+
+    #[token("Xform")]
+    Xform,
+
+    #[token("xformOp")]
     XformOp,
+
+    #[token("xformOpOrder")]
     XformOpOrder,
+
+    #[token("translate")]
     Translate,
+
+    #[token("token")]
     Token,
+
+    #[regex("\"[a-zA-Z]+\"")]
+    Text,
+
+    #[token("true")]
+    True,
+
+    #[token("false")]
+    False,
+
     Identifier(String),
-    Directive(String),
-    End,
-    Unknown,
+    NumberValue(u32),
 }
-
-pub static CHAR_TOKENS: phf::Map<char, Token> = phf_map! {
-    '{' => Token::BraceL,
-    '}' => Token::BraceR,
-    '[' => Token::BracketL,
-    ']' => Token::BracketR,
-    '(' => Token::ParenthesesL,
-    ')' => Token::ParenthesesR,
-    ':' => Token::Colon,
-    ',' => Token::Comma,
-    '=' => Token::Equal,
-};
-
-pub static KEYWORD_TOKENS: phf::Map<&'static str, Token> = phf_map! {
-    "true" => Token::BooleanValue(true),
-    "false" => Token::BooleanValue(false),
-    "null" => Token::NullValue,
-    "def" => Token::Def,
-    "bool" => Token::Bool,
-    "color3f" => Token::Color3f,
-    "color3f[]" => Token::Color3fArray,
-    "translate" => Token::Translate,
-    "float3" => Token::Float3f,
-    "float3[]" => Token::Float3fArray,
-    "double3" => Token::Double3f,
-    "int[]" => Token::IntArray,
-    "point3f[]" => Token::Point3fArray,
-    "normal3f[]" => Token::Normal3fArray,
-    "uniform" => Token::Uniform,
-    "xformOp" => Token::XformOp,
-    "xformOpOrder" => Token::XformOpOrder,
-    "token" => Token::Token,
-};

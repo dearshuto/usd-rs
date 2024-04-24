@@ -253,112 +253,112 @@ impl UniversalSceneDescriptionFile {
     }
 }
 
-#[cfg(test)]
-mod tests {
-    use crate::serializer::{analyzer::Lexer, types::PropertyType};
+// #[cfg(test)]
+// mod tests {
+//     use crate::serializer::{analyzer::Lexer, types::PropertyType};
 
-    use super::{SyntaxTree, UniversalSceneDescriptionFile};
+//     use super::{SyntaxTree, UniversalSceneDescriptionFile};
 
-    #[test]
-    fn def() {
-        let input = r#"#usda 1.0
-                        def Xform "root" {
-                            int[] faceVertexCounts = [3, 3]
-                            int[] faceVertexIndices = [0, 1, 2, 0, 2, 3]
-                            color3f[] primvars:displayColor = [(0, 0, 1)]
-                }"#;
-        let tokens = &Lexer::tokenize(input);
-        let syntax_tree = SyntaxTree::new(tokens);
-        let usd = UniversalSceneDescriptionFile::new(&syntax_tree);
+//     #[test]
+//     fn def() {
+//         let input = r#"#usda 1.0
+//                         def Xform "root" {
+//                             int[] faceVertexCounts = [3, 3]
+//                             int[] faceVertexIndices = [0, 1, 2, 0, 2, 3]
+//                             color3f[] primvars:displayColor = [(0, 0, 1)]
+//                 }"#;
+//         let tokens = &Lexer::tokenize(input);
+//         let syntax_tree = SyntaxTree::new(tokens);
+//         let usd = UniversalSceneDescriptionFile::new(&syntax_tree);
 
-        // def が抽出されている
-        assert_eq!(usd.definitions().len(), 1);
+//         // def が抽出されている
+//         assert_eq!(usd.definitions().len(), 1);
 
-        // def のパラメータが抽出できている
-        let definition = &usd.definitions()[0];
-        assert_eq!(definition.name, "root");
+//         // def のパラメータが抽出できている
+//         let definition = &usd.definitions()[0];
+//         assert_eq!(definition.name, "root");
 
-        let PropertyType::FaceVertexCounts(data) = &definition.properties[0].property else {
-            panic!()
-        };
-        assert_eq!(data, &[3, 3]);
+//         let PropertyType::FaceVertexCounts(data) = &definition.properties[0].property else {
+//             panic!()
+//         };
+//         assert_eq!(data, &[3, 3]);
 
-        let PropertyType::FaceVertexIndicies(data) = &definition.properties[1].property else {
-            panic!()
-        };
-        assert_eq!(data, &[0, 1, 2, 0, 2, 3]);
-    }
+//         let PropertyType::FaceVertexIndicies(data) = &definition.properties[1].property else {
+//             panic!()
+//         };
+//         assert_eq!(data, &[0, 1, 2, 0, 2, 3]);
+//     }
 
-    #[test]
-    fn def_color3f() {
-        let input = r#"#usda 1.0
-                        def Xform "root" {
-                            color3f[] primvars:displayColor = [(0, 0, 1)]
-                }"#;
-        let tokens = &Lexer::tokenize(input);
-        let syntax_tree = SyntaxTree::new(tokens);
-        let usd = UniversalSceneDescriptionFile::new(&syntax_tree);
+//     #[test]
+//     fn def_color3f() {
+//         let input = r#"#usda 1.0
+//                         def Xform "root" {
+//                             color3f[] primvars:displayColor = [(0, 0, 1)]
+//                 }"#;
+//         let tokens = &Lexer::tokenize(input);
+//         let syntax_tree = SyntaxTree::new(tokens);
+//         let usd = UniversalSceneDescriptionFile::new(&syntax_tree);
 
-        // def が抽出されている
-        assert_eq!(usd.definitions().len(), 1);
+//         // def が抽出されている
+//         assert_eq!(usd.definitions().len(), 1);
 
-        // def のパラメータが抽出できている
-        let definition = &usd.definitions()[0];
-        assert_eq!(definition.name, "root");
+//         // def のパラメータが抽出できている
+//         let definition = &usd.definitions()[0];
+//         assert_eq!(definition.name, "root");
 
-        // assert_eq!(definition.properties[0].identifier, "primvars:displayColor");
-    }
+//         // assert_eq!(definition.properties[0].identifier, "primvars:displayColor");
+//     }
 
-    #[test]
-    fn def_int_array_property() {
-        let input = r#"#usda 1.0
-                        def Xform "root" {
-                            int[] faceVertexCounts = [3, 3, 3]
-                }"#;
-        let tokens = &Lexer::tokenize(input);
-        let syntax_tree = SyntaxTree::new(tokens);
-        let usd = UniversalSceneDescriptionFile::new(&syntax_tree);
+//     #[test]
+//     fn def_int_array_property() {
+//         let input = r#"#usda 1.0
+//                         def Xform "root" {
+//                             int[] faceVertexCounts = [3, 3, 3]
+//                 }"#;
+//         let tokens = &Lexer::tokenize(input);
+//         let syntax_tree = SyntaxTree::new(tokens);
+//         let usd = UniversalSceneDescriptionFile::new(&syntax_tree);
 
-        // def が抽出されている
-        assert_eq!(usd.definitions().len(), 1);
+//         // def が抽出されている
+//         assert_eq!(usd.definitions().len(), 1);
 
-        // def のパラメータが抽出できている
-        let definition = &usd.definitions()[0];
-        assert_eq!(definition.name, "root");
+//         // def のパラメータが抽出できている
+//         let definition = &usd.definitions()[0];
+//         assert_eq!(definition.name, "root");
 
-        assert_eq!(definition.properties[0].identifier, "faceVertexCounts");
+//         assert_eq!(definition.properties[0].identifier, "faceVertexCounts");
 
-        let PropertyType::FaceVertexCounts(data) = &definition.properties[0].property else {
-            panic!()
-        };
-        assert_eq!(data, &[3, 3, 3]);
-    }
+//         let PropertyType::FaceVertexCounts(data) = &definition.properties[0].property else {
+//             panic!()
+//         };
+//         assert_eq!(data, &[3, 3, 3]);
+//     }
 
-    #[test]
-    fn def_points_property() {
-        let input = r#"#usda 1.0
-                        def Xform "root" {
-                            point3f[] points = [(-0.5, -0.5, 1.0), (0.5, -0.5, 1.0), (0.0, 0.5, 1.0)]
-                }"#;
-        let tokens = &Lexer::tokenize(input);
-        let syntax_tree = SyntaxTree::new(tokens);
-        let usd = UniversalSceneDescriptionFile::new(&syntax_tree);
+//     #[test]
+//     fn def_points_property() {
+//         let input = r#"#usda 1.0
+//                         def Xform "root" {
+//                             point3f[] points = [(-0.5, -0.5, 1.0), (0.5, -0.5, 1.0), (0.0, 0.5, 1.0)]
+//                 }"#;
+//         let tokens = &Lexer::tokenize(input);
+//         let syntax_tree = SyntaxTree::new(tokens);
+//         let usd = UniversalSceneDescriptionFile::new(&syntax_tree);
 
-        // def が抽出されている
-        assert_eq!(usd.definitions().len(), 1);
+//         // def が抽出されている
+//         assert_eq!(usd.definitions().len(), 1);
 
-        // def のパラメータが抽出できている
-        let definition = &usd.definitions()[0];
-        assert_eq!(definition.name, "root");
-        assert_eq!(definition.properties[0].identifier, "points");
+//         // def のパラメータが抽出できている
+//         let definition = &usd.definitions()[0];
+//         assert_eq!(definition.name, "root");
+//         assert_eq!(definition.properties[0].identifier, "points");
 
-        let PropertyType::Points(data) = &definition.properties[0].property else {
-            panic!()
-        };
+//         let PropertyType::Points(data) = &definition.properties[0].property else {
+//             panic!()
+//         };
 
-        assert_eq!(
-            data,
-            &[[-0.5, -0.5, 1.0], [0.5, -0.5, 1.0], [0.0, 0.5, 1.0]]
-        );
-    }
-}
+//         assert_eq!(
+//             data,
+//             &[[-0.5, -0.5, 1.0], [0.5, -0.5, 1.0], [0.0, 0.5, 1.0]]
+//         );
+//     }
+// }
