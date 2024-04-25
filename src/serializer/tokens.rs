@@ -3,6 +3,9 @@ use logos::Logos;
 #[derive(Logos, Debug, PartialEq, PartialOrd, Clone)]
 #[logos(skip r"[ \t\n\f]+")] // Ignore this regex pattern between tokens
 pub enum Token {
+    #[token("#usda")]
+    Usda,
+
     #[token("{")]
     BraceL,
 
@@ -45,7 +48,7 @@ pub enum Token {
     #[token("float3")]
     Float3f,
 
-    #[token("float3f[]")]
+    #[token("float3[]")]
     Float3fArray,
 
     #[token("double3")]
@@ -87,7 +90,7 @@ pub enum Token {
     #[token("token")]
     Token,
 
-    #[regex("\"[a-zA-Z]+\"")]
+    #[regex("\"[a-zA-Z_]+\"")]
     Text,
 
     #[token("true")]
