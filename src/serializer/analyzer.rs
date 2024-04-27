@@ -54,13 +54,7 @@ mod tests {
         assert_eq!(lexer.next(), Some(Ok(Token::Colon)));
         assert_eq!(lexer.next(), Some(Ok(Token::Translate)));
         assert_eq!(lexer.next(), Some(Ok(Token::Equal)));
-        assert_eq!(lexer.next(), Some(Ok(Token::ParenthesesL)));
-        assert_eq!(lexer.next(), Some(Ok(Token::Number)));
-        assert_eq!(lexer.next(), Some(Ok(Token::Comma)));
-        assert_eq!(lexer.next(), Some(Ok(Token::Number)));
-        assert_eq!(lexer.next(), Some(Ok(Token::Comma)));
-        assert_eq!(lexer.next(), Some(Ok(Token::Number)));
-        assert_eq!(lexer.next(), Some(Ok(Token::ParenthesesR)));
+        assert_eq!(lexer.next(), Some(Ok(Token::NumberArray)));
         assert_eq!(lexer.next(), Some(Ok(Token::BraceR)));
 
         assert_eq!(lexer.next(), None);
@@ -78,21 +72,51 @@ mod tests {
     }
 
     #[test]
-    fn number() {
-        let input = r#"12345, 12, 345"#;
+    fn number_natural() {
+        let input = r#"12345"#;
         let mut lexer = Lexer::new(input);
         assert_eq!(lexer.next(), Some(Ok(Token::Number)));
         assert_eq!(lexer.peek(), "12345");
 
-        assert_eq!(lexer.next(), Some(Ok(Token::Comma)));
+        assert_eq!(lexer.next(), None);
+    }
 
+    #[test]
+    fn number_real_positive() {
+        let input = r#"54.2"#;
+        let mut lexer = Lexer::new(input);
         assert_eq!(lexer.next(), Some(Ok(Token::Number)));
-        assert_eq!(lexer.peek(), "12");
+        assert_eq!(lexer.peek(), "54.2");
 
-        assert_eq!(lexer.next(), Some(Ok(Token::Comma)));
+        assert_eq!(lexer.next(), None);
+    }
 
+    #[test]
+    fn number_real_negative() {
+        let input = r#"-0.45"#;
+        let mut lexer = Lexer::new(input);
         assert_eq!(lexer.next(), Some(Ok(Token::Number)));
-        assert_eq!(lexer.peek(), "345");
+        assert_eq!(lexer.peek(), "-0.45");
+
+        assert_eq!(lexer.next(), None);
+    }
+
+    #[test]
+    fn number_negative() {
+        let input = r#"-345"#;
+        let mut lexer = Lexer::new(input);
+        assert_eq!(lexer.next(), Some(Ok(Token::Number)));
+        assert_eq!(lexer.peek(), "-345");
+
+        assert_eq!(lexer.next(), None);
+    }
+
+    #[test]
+    fn number_array() {
+        let input = r#"(12345.0, -1.2, 3.45)"#;
+        let mut lexer = Lexer::new(input);
+        assert_eq!(lexer.next(), Some(Ok(Token::NumberArray)));
+        assert_eq!(lexer.peek(), "(12345.0, -1.2, 3.45)");
 
         assert_eq!(lexer.next(), None);
     }

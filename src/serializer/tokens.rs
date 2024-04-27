@@ -36,6 +36,14 @@ pub enum Token {
     #[regex(r"[+-]?[0-9]+(?:\.[0-9]+)?")]
     Number,
 
+    // 数値配列を抽出
+    // マッチする例：(0, 1, -2, -4, 0.5, -0.1)
+    //
+    // 正規表現は <数字> の後に ", <数字>"を繰り返すような構文
+    // (<整数>[, <数字>][, <数字>][, <数字>]...)
+    #[regex(r"\([-]*\d+(?:\.\d+)?(,\s*[-]*\d+(?:\.\d+)?)*\)")]
+    NumberArray,
+
     #[token("bool")]
     Bool,
 
@@ -92,6 +100,9 @@ pub enum Token {
 
     #[regex("\"[a-zA-Z_]+\"")]
     Text,
+
+    #[regex("[a-zA-Z]+")]
+    IdentifierTentative,
 
     #[token("true")]
     True,
